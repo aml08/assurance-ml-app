@@ -33,7 +33,6 @@ Cette application intègre des mesures de sécurité robustes :
 
     └── model_utils.py    # Fonctions de nettoyage
 
-
 Cloner le repo :
 ```Bash
 git clone [https://github.com/votre-pseudo/assurance-ml-app.git](https://github.com/aml08/assurance-ml-app.git)
@@ -58,6 +57,7 @@ L'application est déployée et accessible ici :
 https://assurance-ml-app-aml08.streamlit.app
 Utilisateur : admin
 Mdp : admin
+
 
 
 
