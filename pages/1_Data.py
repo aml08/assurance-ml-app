@@ -43,7 +43,7 @@ try:
     st.write(f"Affichage de **{len(df_filtered)}** profils correspondants :")
     st.dataframe(df_filtered.head())
     
-    # --- 4. ANALYSE PAR CATÉGORIE (Boxplot) ---
+    # --- 4. ANALYSE PAR CATÉGORIE 
     st.subheader("Analyse des frais par catégorie")
     var = st.selectbox(
         label="Comparer les frais selon :",
@@ -54,8 +54,8 @@ try:
 
     st.divider()
 
-    # --- 5. TON ANCIEN DASHBOARD DE CORRÉLATION (BULLES) ---
-    st.subheader("🎯 Dashboard Interactif : Âge, IMC et Frais")
+    # --- 5. DASHBOARD DE CORRÉLATION 
+    st.subheader("🎯 Dashboard de corrélation : Âge, IMC et Frais")
     st.write("""
     Ce graphique montre l'impact combiné de l'Âge et de l'IMC. 
     **La taille et la couleur des bulles représentent le montant des frais.**
@@ -77,14 +77,6 @@ try:
         color_continuous_scale=px.colors.sequential.Plasma # Couleurs contrastées
     )
     st.plotly_chart(fig_corr, use_container_width=True)
-
-    # --- 6. NOTE ACCESSIBILITÉ ---
-    st.info("""
-    **♿ Mesures d'accessibilité implémentées :**
-    - **Navigation** : Tous les filtres sont accessibles via la touche **TAB**.
-    - **Labels explicites** : Chaque menu possède un libellé clair pour les lecteurs d'écran.
-    - **Interactivité** : Le graphique permet un survol détaillé (Hover) pour pallier les difficultés visuelles.
-    """)
-
+    
 except Exception as e:
     st.error(f"Erreur : {e}")
