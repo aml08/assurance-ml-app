@@ -75,4 +75,4 @@ if submit:
     print(f"LOG: Prédiction générée - Age: {age}, Fumeur: {smoker}, Frais: {base_frais}")
 
 # --- PIED DE PAGE ACCESSIBLE ---
-st.caption("Note : Cette estimation est basée sur un modèle de régression linéaire. Navigation optimisée pour lecteurs d'écran.")
+st.caption("Note : Cette estimation est basée sur un modèle de régression linéaire.")
