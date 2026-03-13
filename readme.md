@@ -34,11 +34,12 @@ Cette application intègre des mesures de sécurité robustes :
     └── model_utils.py    # Fonctions de nettoyage
 
 1. Clôner le depôt
-``` git clone [https://github.com/votre-pseudo/assurance-ml-app.git](https://github.com/votre-pseudo/assurance-ml-app.git)
-```
+git clone [https://github.com/votre-pseudo/assurance-ml-app.git](https://github.com/votre-pseudo/assurance-ml-app.git)
+
 2. Installer les dépendances
 pip install -r requirements.txt
 
 3. Lancer l'application
 streamlit run app.py
+
 
