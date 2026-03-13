@@ -7,7 +7,7 @@ if "authenticated" not in st.session_state or not st.session_state["authenticate
 
 st.title("🔮 Estimation Personnalisée des Frais")
 
-# --- FORMULAIRE ACCESSIBLE ---
+# --- FORMULAIRE ---
 with st.form("form_pred"):
     st.subheader("📝 Informations de l'assuré")
     st.write("Remplissez les champs ci-dessous (Navigation possible via TAB).")
@@ -40,7 +40,6 @@ if submit:
     # Utilisation de colonnes pour les indicateurs
     m1, m2, m3 = st.columns(3)
     
-    # --- MODIFICATION ICI : On convertit en entier (int) et on enlève le formatage ---
     m1.metric("Frais annuels estimés", f"{int(base_frais)} €")
     
     # Indicateur Santé (IMC)
