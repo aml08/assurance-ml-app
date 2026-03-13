@@ -1,25 +1,62 @@
 import streamlit as st
+import datetime
 
-st.set_page_config(page_title="Assurance Predict", page_icon="🏥")
+# --- CONFIGURATION DE LA PAGE ---
+st.set_page_config(page_title="Assurance Predict - Sécurisé", page_icon="🏥")
 
-# Sécurité
+# --- 1. GESTION DES LOGS (Fonction interne) ---
+def log_event(message):
+    """Affiche un log dans la console Streamlit Cloud (Manage App)"""
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print(f"[{timestamp}] LOG: {message}")
+
+# --- 2. GESTION DU CONSENTEMENT RGPD ---
+if "rgpd_consent" not in st.session_state:
+    st.session_state["rgpd_consent"] = False
+
+if not st.session_state["rgpd_consent"]:
+    st.title("🛡️ Protection de vos données")
+    st.info("""
+    **Notice RGPD / Privacy :** Cette application utilise des cookies de session pour l'authentification. 
+    Les données saisies dans le formulaire de prédiction ne sont pas stockées de façon permanente. 
+    En cliquant sur 'Accepter', vous consentez à l'utilisation de ces outils techniques.
+    """)
+    if st.button("Accepter et continuer"):
+        st.session_state["rgpd_consent"] = True
+        log_event("Consentement RGPD accepté par l'utilisateur.")
+        st.rerun()
+    st.stop()
+
+# --- 3. GESTION DES ACCÈS (AUTHENTIFICATION) ---
 if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
 
 def login():
-    pwd = st.text_input("Mot de passe", type="password")
-    if st.button("Connexion"):
+    st.title("🔐 Accès Restreint")
+    pwd = st.text_input("Veuillez saisir le mot de passe de l'entreprise :", type="password")
+    if st.button("Se connecter"):
         if pwd == st.secrets["PASSWORD"]:
             st.session_state["authenticated"] = True
+            log_event("Authentification réussie.")
             st.rerun()
         else:
-            st.error("❌ Accès refusé")
+            st.error("Mot de passe incorrect.")
+            log_event("Échec d'authentification (mauvais mot de passe).")
 
 if not st.session_state["authenticated"]:
-    st.title("🔐 Accès Restreint")
     login()
     st.stop()
 
+# --- 4. CONTENU DE L'APPLICATION (Une fois authentifié) ---
 st.title("🏥 Système Expert Assurance")
-st.success("Connexion réussie !")
-st.write("Bienvenue. Utilisez le menu à gauche pour explorer les données ou prédire des frais.")
+st.success("Bienvenue dans l'interface sécurisée.")
+
+st.markdown("""
+### Présentation du projet
+Cette plateforme permet d'estimer les frais d'assurance santé à partir de données anonymisées.
+- **Conformité :** Application sécurisée via HTTPS.
+- **Traçabilité :** Les accès et prédictions sont logués.
+- **Navigation :** Utilisez la barre latérale pour explorer les données ou lancer l'IA.
+""")
+
+log_event("Page d'accueil consultée.")
