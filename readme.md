@@ -45,7 +45,9 @@ streamlit run app.py
 ## Accès Direct (Démo en ligne)
 
 L'application est déployée et accessible ici : 
- [**Consulter l'application Assurance Predict**](https://assurance-ml-app-aml08.streamlit.app/)
-> * **Mot de passe :** `assurance 2026`
+https://assurance-ml-app-aml08.streamlit.app
+Utilisateur : admin
+Mdp : admin
+
 
 
