@@ -7,92 +7,87 @@ if "authenticated" not in st.session_state or not st.session_state["authenticate
     st.warning("🔒 Veuillez vous connecter sur l'accueil.")
     st.stop()
 
-st.title("📊 Exploration & Filtres Accessibles")
+st.title("📊 Exploration des Données")
 
 try:
     df = pd.read_csv("data/insurance_data.csv")
 
-    # --- 2. SECTION FILTRES (Accessibilité : Libellés explicites) ---
-    st.subheader("🔍 Filtrer les données")
-    st.write("Utilisez les menus ci-dessous pour segmenter le tableau (Navigation possible via la touche TAB).")
-    
-    col_f1, col_f2, col_f3 = st.columns(3)
+    # --- 2. AJOUT : FILTRES ACCESSIBLES (Nouveau) ---
+    st.subheader("🔍 Filtres de recherche")
+    col_f1, col_f2 = st.columns(2)
     
     with col_f1:
-        # Label explicite pour lecteur d'écran
+        # Label explicite pour l'accessibilité
         region_filter = st.multiselect(
             label="Filtrer par région géographique :",
             options=df['region'].unique(),
             default=df['region'].unique(),
-            help="Sélectionnez une ou plusieurs régions pour mettre à jour les graphiques."
+            help="Sélectionnez les régions à afficher. Navigation clavier disponible (TAB)."
         )
     
     with col_f2:
         smoker_filter = st.radio(
-            label="Statut tabagique :",
+            label="Filtrer par statut tabagique :",
             options=["Tous", "yes", "no"],
             horizontal=True,
-            help="Choisissez d'afficher uniquement les fumeurs, les non-fumeurs ou tout le monde."
-        )
-        
-    with col_f3:
-        # Filtre par âge avec un slider accessible
-        age_min, age_max = int(df['age'].min()), int(df['age'].max())
-        age_range = st.slider(
-            label="Tranche d'âge des assurés :",
-            min_value=age_min,
-            max_value=age_max,
-            value=(age_min, age_max)
+            help="Filtre exclusif pour comparer les profils fumeurs/non-fumeurs."
         )
 
-    # Application des filtres au dataframe
+    # Application des filtres
     df_filtered = df[df['region'].isin(region_filter)]
     if smoker_filter != "Tous":
         df_filtered = df_filtered[df_filtered['smoker'] == smoker_filter]
-    df_filtered = df_filtered[(df_filtered['age'] >= age_range[0]) & (df_filtered['age'] <= age_range[1])]
-
-    # --- 3. AFFICHAGE DU TABLEAU ---
-    st.write(f"Affichage de **{len(df_filtered)}** profils correspondants :")
-    st.dataframe(df_filtered.head(50), use_container_width=True)
 
     st.divider()
 
-    # --- 4. GRAPHISMES À HAUT CONTRASTE ---
-    st.subheader("🎯 Analyse visuelle (Contraste élevé)")
+    # --- 3. APERÇU (Ce que tu avais de base) ---
+    st.write(f"Affichage de **{len(df_filtered)}** lignes après filtrage :")
+    st.dataframe(df_filtered.head())
     
-    c1, c2 = st.columns(2)
+    # --- 4. ANALYSE PAR CATÉGORIE (Ce que tu avais de base) ---
+    st.subheader("Analyse des frais par catégorie")
+    var = st.selectbox(
+        label="Comparer les frais selon la variable suivante :", # Label explicite
+        options=["sex", "smoker", "region"]
+    )
+    fig_box = px.box(df_filtered, x=var, y="charges", color=var, title=f"Frais selon : {var}")
+    st.plotly_chart(fig_box)
+
+    st.divider()
+
+    # --- 5. DASHBOARD DE CORRÉLATION (Ce que tu avais de base) ---
+    st.subheader("🎯 Dashboard de Corrélation")
     
-    with c1:
-        # Heatmap avec palette de couleurs contrastées (RdBu_r est excellent pour l'accessibilité)
-        st.write("**Matrice de corrélations numériques**")
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.write("**Matrice de Corrélation (Couleurs contrastées)**")
         corr = df_filtered[['age', 'bmi', 'children', 'charges']].corr()
         fig_heat = px.imshow(
             corr, 
             text_auto=".2f", 
-            color_continuous_scale='RdBu_r', # Bleu et Rouge contrastés
-            labels=dict(color="Force du lien")
+            color_continuous_scale='RdBu_r', # Haut contraste (Bleu/Rouge)
+            title="Force des liens"
         )
         st.plotly_chart(fig_heat, use_container_width=True)
 
-    with c2:
-        # Graphique de tendance avec une ligne rouge vive sur fond blanc
-        st.write("**Évolution des frais par âge**")
+    with col2:
+        st.write("**Tendance : Âge vs Frais**")
         fig_trend = px.scatter(
             df_filtered, x="age", y="charges", 
-            color_discrete_sequence=['#00441b'], # Vert très foncé pour le contraste
-            trendline="ols",
-            trendline_color_override="#e31a1c", # Rouge vif pour la visibilité
-            labels={"age": "Âge (années)", "charges": "Frais (€)"}
+            trendline="ols", 
+            trendline_color_override="red", # Visibilité maximale
+            title="Progression des frais"
         )
         st.plotly_chart(fig_trend, use_container_width=True)
 
-    # --- 5. NOTE D'ACCESSIBILITÉ ---
-    with st.expander("♿ Note sur l'accessibilité de cette page"):
-        st.markdown("""
-        * **Contraste** : Les palettes de couleurs Plotly ('RdBu_r') ont été choisies pour rester lisibles même en cas de daltonisme.
-        * **Navigation** : Tous les filtres ci-dessus sont utilisables au clavier (Tab + Flèches/Entrée).
-        * **Labels** : Chaque champ possède un `label` explicite plutôt qu'un simple placeholder, facilitant l'usage des lecteurs d'écran.
-        """)
+    # --- 6. AJOUT : NOTE ACCESSIBILITÉ (Nouveau) ---
+    st.info("""
+    **♿ Mesures d'accessibilité implémentées :**
+    - **Navigation au clavier** : Tous les filtres sont accessibles via la touche **TAB**.
+    - **Labels explicites** : Chaque menu possède un libellé clair pour les lecteurs d'écran.
+    - **Contraste** : Utilisation de palettes de couleurs à haut contraste (Rouge/Bleu/Blanc).
+    """)
 
 except Exception as e:
     st.error(f"Erreur : {e}")
