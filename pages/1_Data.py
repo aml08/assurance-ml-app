@@ -10,56 +10,44 @@ if "authenticated" not in st.session_state or not st.session_state["authenticate
 st.title("📊 Exploration des Données")
 
 try:
+    # --- 2. CHARGEMENT ET APERÇU (Ce que tu avais de base) ---
     df = pd.read_csv("data/insurance_data.csv")
-    
-    # --- 2. APERÇU DES DONNÉES ---
     st.write("Aperçu des données :")
     st.dataframe(df.head())
     
-    st.divider()
-
-    # --- 3. ANALYSE SIMPLE (Boxplot) ---
-    st.subheader("Analyse par catégorie")
-    var = st.selectbox("Comparer les frais selon :", ["sex", "smoker", "region"])
-    fig_box = px.box(df, x=var, y="charges", color=var, points="all", title=f"Frais selon : {var}")
+    # --- 3. PREMIER GRAPHIQUE (Ce que tu avais de base) ---
+    st.subheader("Analyse des frais par catégorie")
+    var = st.selectbox("Choisir une variable pour le boxplot", ["sex", "smoker", "region"])
+    fig_box = px.box(df, x=var, y="charges", color=var, title=f"Frais selon : {var}")
     st.plotly_chart(fig_box)
 
     st.divider()
 
-    # --- 4. DASHBOARD DE CORRÉLATION SIMPLIFIÉ ---
-    st.subheader("🎯 Dashboard de Corrélation (Lisible)")
-    
-    col1, col2 = st.columns([1, 1])
-
-    with col1:
-        st.write("**Matrice de Corrélation**")
-        # On ne garde que les colonnes numériques pour la corrélation
-        corr = df[['age', 'bmi', 'children', 'charges']].corr()
-        fig_heat = px.imshow(
-            corr, 
-            text_auto=".2f", 
-            color_continuous_scale='RdBu_r', 
-            aspect="auto",
-            title="Force des liens (1 = lien total)"
-        )
-        st.plotly_chart(fig_heat, use_container_width=True)
-
-    with col2:
-        st.write("**Tendance : Âge vs Frais**")
-        # Un graphique avec une ligne de tendance (Trendline) pour la lisibilité
-        fig_trend = px.scatter(
-            df, x="age", y="charges", 
-            trendline="ols", # Ajoute la ligne de régression
-            trendline_color_override="red",
-            title="Plus l'âge monte, plus les frais montent"
-        )
-        st.plotly_chart(fig_trend, use_container_width=True)
-
-    st.info("""
-    **Comment lire ce dashboard ?**
-    - **À gauche (Heatmap) :** Plus le carré est rouge/foncé, plus la corrélation est forte. 
-    - **À droite (Tendance) :** La ligne rouge montre la direction générale. Si elle monte, la corrélation est positive.
+    # --- 4. LE NOUVEAU DASHBOARD (Ajout demandé) ---
+    st.subheader("🎯 Dashboard Interactif : Corrélation Âge, IMC et Frais")
+    st.write("""
+    Ce graphique montre comment l'âge et l'IMC influencent conjointement les frais. 
+    **La taille et la couleur des points représentent le montant des frais.**
     """)
 
+    fig_corr = px.scatter(
+        df, 
+        x="age", 
+        y="bmi", 
+        size="charges",      
+        color="charges",     
+        hover_name="id_client", 
+        labels={
+            "age": "Âge",
+            "bmi": "IMC (BMI)",
+            "charges": "Frais (€)"
+        },
+        title="Corrélation multidimensionnelle : Âge vs IMC vs Frais",
+        color_continuous_scale=px.colors.sequential.Viridis
+    )
+    st.plotly_chart(fig_corr, use_container_width=True)
+
+    st.info("💡 Plus les points sont gros et jaunes, plus le profil est coûteux pour l'assurance.")
+
 except Exception as e:
-    st.error(f"Erreur : {e}")
+    st.error(f"Erreur de chargement : {e}")
