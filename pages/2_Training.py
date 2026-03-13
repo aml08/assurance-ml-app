@@ -58,3 +58,31 @@ try:
 
 except Exception as e:
     st.error(f"Erreur : {e}")
+
+# --- ANALYSE DES BIAIS
+st.divider()
+st.subheader("⚖️ Analyse d'équité et Atténuation des biais")
+
+# On calcule l'erreur moyenne pour les fumeurs vs non-fumeurs
+df_test = X_test.copy()
+df_test['actual'] = y_test
+df_test['pred'] = model.predict(X_test)
+df_test['erreur'] = df_test['pred'] - df_test['actual']
+
+# Affichage des erreurs moyennes par catégorie (ex: Smoker)
+# Note: 1 = Yes, 0 = No (selon ton LabelEncoder)
+bias_analysis = df_test.groupby('smoker')['erreur'].mean()
+st.write("**Erreur moyenne de prédiction par catégorie (Fumeur vs Non-Fumeur) :**")
+st.bar_chart(bias_analysis)
+
+st.warning("""
+**Analyse des biais :** Si l'erreur est beaucoup plus élevée pour les fumeurs, le modèle "sur-pénalise" cette catégorie. 
+Cela peut être dû à un déséquilibre dans les données (pas assez d'exemples de fumeurs en bonne santé).
+""")
+
+st.info("""
+**Solutions proposées pour atténuer les biais :**
+1. **Rééquilibrage (Oversampling) :** Ajouter des données synthétiques pour les catégories sous-représentées.
+2. **Contrainte d'Équité (Fairness constraints) :** Ajuster le modèle pour minimiser la différence d'erreur entre les groupes.
+3. **Audit des variables :** Vérifier si la 'région' n'est pas un proxy masqué pour une discrimination sociale.
+""")
