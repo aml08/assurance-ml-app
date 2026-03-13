@@ -5,9 +5,9 @@ Ce projet est une application web interactive de Data Science développée avec 
 ##  Fonctionnalités principales
 
 L'application est divisée en trois modules clés :
-1. ** Data Exploration** : Visualisation interactive du dataset, analyse des corrélations (Heatmap) et impact des variables (Âge, IMC, Tabac) sur les coûts.
-2. ** Modélisation** : Entraînement d'un modèle de **Régression Linéaire** avec affichage des coefficients pour garantir l'explicabilité de l'IA.
-3. ** Prédiction** : Interface de saisie utilisateur avec validation des entrées pour estimer les frais en temps réel.
+1. **Data Exploration** : Visualisation interactive du dataset, analyse des corrélations (Heatmap) et impact des variables (Âge, IMC, Tabac) sur les coûts.
+2. **Modélisation** : Entraînement d'un modèle de **Régression Linéaire** avec affichage des coefficients pour garantir l'explicabilité de l'IA.
+3. **Prédiction** : Interface de saisie utilisateur avec validation des entrées pour estimer les frais en temps réel.
 
 ##  Sécurité et Conformité
 
@@ -34,10 +34,11 @@ Cette application intègre des mesures de sécurité robustes :
     └── model_utils.py    # Fonctions de nettoyage
 
 1. Clôner le depôt
-git clone [https://github.com/votre-pseudo/assurance-ml-app.git](https://github.com/votre-pseudo/assurance-ml-app.git)
-
+``` git clone [https://github.com/votre-pseudo/assurance-ml-app.git](https://github.com/votre-pseudo/assurance-ml-app.git)
+```
 2. Installer les dépendances
 pip install -r requirements.txt
 
 3. Lancer l'application
 streamlit run app.py
+
