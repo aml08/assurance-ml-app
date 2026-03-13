@@ -40,8 +40,8 @@ if submit:
     # Utilisation de colonnes pour les indicateurs
     m1, m2, m3 = st.columns(3)
     
-    # Indicateur de prix
-    m1.metric("Frais annuels estimés", f"{base_frais:,.2f} €", delta_color="inverse")
+    # --- MODIFICATION ICI : On convertit en entier (int) et on enlève le formatage ---
+    m1.metric("Frais annuels estimés", f"{int(base_frais)} €")
     
     # Indicateur Santé (IMC)
     if bmi < 18.5:
@@ -71,8 +71,8 @@ if submit:
     else:
         st.info(f"ℹ️ Une modification de l'IMC pourrait réduire vos frais annuels.")
 
-    # Log pour la traçabilité (TP)
-    print(f"LOG: Prédiction générée - Age: {age}, Fumeur: {smoker}, Frais: {base_frais}")
+    # Log pour la traçabilité (TP) - Mis à jour en entier aussi
+    print(f"LOG: Prédiction générée - Age: {age}, Fumeur: {smoker}, Frais: {int(base_frais)}")
 
 # --- PIED DE PAGE ACCESSIBLE ---
 st.caption("Note : Cette estimation est basée sur un modèle de régression linéaire.")
