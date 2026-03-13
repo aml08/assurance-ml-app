@@ -42,8 +42,10 @@ pip install -r requirements.txt
 3. Lancer l'application
 streamlit run app.py
 
-Pour tester l'application :
-https://assurance-ml-app-aml08.streamlit.app/
-Mdp = assurance 2026
+## Accès Direct (Démo en ligne)
+
+L'application est déployée et accessible ici : 
+ [**Consulter l'application Assurance Predict**](https://assurance-ml-app-aml08.streamlit.app/)
+> * **Mot de passe :** `assurance 2026`
 
 
