@@ -59,30 +59,42 @@ try:
 except Exception as e:
     st.error(f"Erreur : {e}")
 
-# --- ANALYSE DES BIAIS
+# --- ANALYSE RÉELLE DES BIAIS 
 st.divider()
-st.subheader("⚖️ Analyse d'équité et Atténuation des biais")
+st.subheader("⚖️ Analyse factuelle de l'équité du modèle")
 
-# On calcule l'erreur moyenne pour les fumeurs vs non-fumeurs
+# Préparation des données de test pour l'analyse
 df_test = X_test.copy()
-df_test['actual'] = y_test
-df_test['pred'] = model.predict(X_test)
-df_test['erreur'] = df_test['pred'] - df_test['actual']
+df_test['Réel'] = y_test
+df_test['Prédiction'] = model.predict(X_test)
+df_test['Erreur_Absolue'] = abs(df_test['Prédiction'] - df_test['Réel'])
 
-# Affichage des erreurs moyennes par catégorie (ex: Smoker)
-# Note: 1 = Yes, 0 = No (selon ton LabelEncoder)
-bias_analysis = df_test.groupby('smoker')['erreur'].mean()
-st.write("**Erreur moyenne de prédiction par catégorie (Fumeur vs Non-Fumeur) :**")
-st.bar_chart(bias_analysis)
+# 1. Observation factuelle sur le Tabagisme (Le biais le plus fort)
+# On ré-encode pour la lecture : 1 est souvent 'yes' (fumeur)
+bias_smoker = df_test.groupby('smoker')['Erreur_Absolue'].mean()
 
-st.warning("""
-**Analyse des biais :** Si l'erreur est beaucoup plus élevée pour les fumeurs, le modèle "sur-pénalise" cette catégorie. 
-Cela peut être dû à un déséquilibre dans les données (pas assez d'exemples de fumeurs en bonne santé).
+st.write("### 🔍 Constatations sur les données")
+col1, col2 = st.columns(2)
+
+with col1:
+    st.write("**Erreur moyenne par statut :**")
+    st.bar_chart(bias_smoker)
+
+with col2:
+    diff_erreur = bias_smoker.max() - bias_smoker.min()
+    st.metric("Écart d'erreur (Biais)", f"{diff_erreur:,.2f} €")
+
+# 2. Ton analyse personnalisée 
+st.markdown(f"""
+### 📝 Interprétation des faits observés
+En analysant les résultats, on observe que l'erreur moyenne est de **{bias_smoker.max():,.2f} €** pour un groupe contre **{bias_smoker.min():,.2f} €** pour l'autre. 
+
+**Le fait observé :** Le modèle a beaucoup plus de mal à prédire avec précision les frais des **fumeurs**. Cela s'explique par le fait que le statut 'fumeur' déclenche des frais très élevés mais très variables (certains fument mais n'ont pas encore de pathologies, d'autres si). 
+
+**Le risque de biais :** Le modèle risque de "sur-pénaliser" un jeune fumeur en bonne santé en lui appliquant la moyenne élevée du groupe, ce qui est une injustice algorithmique.
 """)
 
 st.info("""
-**Solutions proposées pour atténuer les biais :**
-1. **Rééquilibrage (Oversampling) :** Ajouter des données synthétiques pour les catégories sous-représentées.
-2. **Contrainte d'Équité (Fairness constraints) :** Ajuster le modèle pour minimiser la différence d'erreur entre les groupes.
-3. **Audit des variables :** Vérifier si la 'région' n'est pas un proxy masqué pour une discrimination sociale.
+### 🛡️ Ma solution proposée
+Pour atténuer ce biais observé, je préconise d'introduire une **variable d'interaction** entre l'âge et le tabagisme (`age * smoker`) dans le modèle. Cela permettrait à l'IA de comprendre que l'impact du tabac n'est pas une amende forfaitaire, mais un risque qui progresse avec le temps.
 """)
