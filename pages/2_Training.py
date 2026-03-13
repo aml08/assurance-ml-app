@@ -72,8 +72,12 @@ if 'X_test' in locals() and 'model' in locals():
     df_test['Prédiction'] = model.predict(X_test)
     df_test['Erreur_Absolue'] = abs(df_test['Prédiction'] - df_test['Réel'])
 
-    # 1. Observation factuelle sur le Tabagisme (Le biais le plus fort)
+   # 1. Observation factuelle sur le Tabagisme (Le biais le plus fort)
     bias_smoker = df_test.groupby('smoker')['Erreur_Absolue'].mean()
+
+    # --- AJOUT DE LA LÉGENDE ICI ---
+    # On remplace l'index (0 et 1) par du texte compréhensible
+    bias_smoker.index = ['Non-Fumeur', 'Fumeur']
 
     st.write("### Constatations sur les données")
     col1, col2 = st.columns(2)
@@ -85,7 +89,6 @@ if 'X_test' in locals() and 'model' in locals():
     with col2:
         diff_erreur = bias_smoker.max() - bias_smoker.min()
         st.metric("Écart d'erreur (Biais)", f"{diff_erreur:,.2f} €")
-
 else:
     # Le message qui s'affiche à l'ouverture de la page
     st.info("💡 Veuillez cliquer sur 'Lancer l'entraînement du modèle' ci-dessus pour débloquer l'analyse factuelle d'équité.")
