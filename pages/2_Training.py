@@ -12,7 +12,7 @@ st.title("⚙️ Entraînement & Interprétation")
 try:
     df = pd.read_csv("data/insurance_data.csv")
     
-    if st.button("Lancer l'entraînement (Régression Linéaire)"):
+    if st.button("Lancer l'entraînement du modèle"):
         with st.spinner('Analyse mathématique en cours...'):
             # 1. Préparation (identique)
             features = ['age', 'sex', 'bmi', 'children', 'smoker', 'region', 'charges']
