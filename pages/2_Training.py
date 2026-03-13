@@ -63,22 +63,29 @@ except Exception as e:
 st.divider()
 st.subheader("⚖️ Analyse factuelle de l'équité du modèle")
 
-# Préparation des données de test pour l'analyse
-df_test = X_test.copy()
-df_test['Réel'] = y_test
-df_test['Prédiction'] = model.predict(X_test)
-df_test['Erreur_Absolue'] = abs(df_test['Prédiction'] - df_test['Réel'])
+# --- CORRECTION DU BUG ICI ---
+# On vérifie si X_test et le modèle ont bien été créés (donc si on a cliqué sur le bouton)
+if 'X_test' in locals() and 'model' in locals():
+    # Préparation des données de test pour l'analyse
+    df_test = X_test.copy()
+    df_test['Réel'] = y_test
+    df_test['Prédiction'] = model.predict(X_test)
+    df_test['Erreur_Absolue'] = abs(df_test['Prédiction'] - df_test['Réel'])
 
-# 1. Observation factuelle sur le Tabagisme (Le biais le plus fort)
-bias_smoker = df_test.groupby('smoker')['Erreur_Absolue'].mean()
+    # 1. Observation factuelle sur le Tabagisme (Le biais le plus fort)
+    bias_smoker = df_test.groupby('smoker')['Erreur_Absolue'].mean()
 
-st.write("### Constatations sur les données")
-col1, col2 = st.columns(2)
+    st.write("### Constatations sur les données")
+    col1, col2 = st.columns(2)
 
-with col1:
-    st.write("**Erreur moyenne par statut :**")
-    st.bar_chart(bias_smoker)
+    with col1:
+        st.write("**Erreur moyenne par statut :**")
+        st.bar_chart(bias_smoker)
 
-with col2:
-    diff_erreur = bias_smoker.max() - bias_smoker.min()
-    st.metric("Écart d'erreur (Biais)", f"{diff_erreur:,.2f} €")
+    with col2:
+        diff_erreur = bias_smoker.max() - bias_smoker.min()
+        st.metric("Écart d'erreur (Biais)", f"{diff_erreur:,.2f} €")
+
+else:
+    # Le message qui s'affiche à l'ouverture de la page
+    st.info("💡 Veuillez cliquer sur 'Lancer l'entraînement du modèle' ci-dessus pour débloquer l'analyse factuelle d'équité.")
