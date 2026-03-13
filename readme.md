@@ -42,4 +42,8 @@ pip install -r requirements.txt
 3. Lancer l'application
 streamlit run app.py
 
+Pour tester l'application :
+https://assurance-ml-app-aml08.streamlit.app/
+Mdp = assurance 2026
+
 
