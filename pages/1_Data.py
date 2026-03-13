@@ -12,17 +12,16 @@ st.title("📊 Exploration des Données")
 try:
     df = pd.read_csv("data/insurance_data.csv")
 
-    # --- 2. AJOUT : FILTRES ACCESSIBLES (Nouveau) ---
+    # --- 2. FILTRES ACCESSIBLES ---
     st.subheader("🔍 Filtres de recherche")
     col_f1, col_f2 = st.columns(2)
     
     with col_f1:
-        # Label explicite pour l'accessibilité
         region_filter = st.multiselect(
             label="Filtrer par région géographique :",
             options=df['region'].unique(),
             default=df['region'].unique(),
-            help="Sélectionnez les régions à afficher. Navigation clavier disponible (TAB)."
+            help="Sélectionnez les régions. Navigation clavier via TAB."
         )
     
     with col_f2:
@@ -30,7 +29,7 @@ try:
             label="Filtrer par statut tabagique :",
             options=["Tous", "yes", "no"],
             horizontal=True,
-            help="Filtre exclusif pour comparer les profils fumeurs/non-fumeurs."
+            help="Comparez les profils fumeurs et non-fumeurs."
         )
 
     # Application des filtres
@@ -40,14 +39,14 @@ try:
 
     st.divider()
 
-    # --- 3. APERÇU (Ce que tu avais de base) ---
-    st.write(f"Affichage de **{len(df_filtered)}** lignes après filtrage :")
+    # --- 3. APERÇU ---
+    st.write(f"Affichage de **{len(df_filtered)}** profils correspondants :")
     st.dataframe(df_filtered.head())
     
-    # --- 4. ANALYSE PAR CATÉGORIE (Ce que tu avais de base) ---
+    # --- 4. ANALYSE PAR CATÉGORIE (Boxplot) ---
     st.subheader("Analyse des frais par catégorie")
     var = st.selectbox(
-        label="Comparer les frais selon la variable suivante :", # Label explicite
+        label="Comparer les frais selon :",
         options=["sex", "smoker", "region"]
     )
     fig_box = px.box(df_filtered, x=var, y="charges", color=var, title=f"Frais selon : {var}")
@@ -55,38 +54,36 @@ try:
 
     st.divider()
 
-    # --- 5. DASHBOARD DE CORRÉLATION (Ce que tu avais de base) ---
-    st.subheader("🎯 Dashboard de Corrélation")
-    
-    col1, col2 = st.columns(2)
+    # --- 5. TON ANCIEN DASHBOARD DE CORRÉLATION (BULLES) ---
+    st.subheader("🎯 Dashboard Interactif : Âge, IMC et Frais")
+    st.write("""
+    Ce graphique montre l'impact combiné de l'Âge et de l'IMC. 
+    **La taille et la couleur des bulles représentent le montant des frais.**
+    """)
 
-    with col1:
-        st.write("**Matrice de Corrélation (Couleurs contrastées)**")
-        corr = df_filtered[['age', 'bmi', 'children', 'charges']].corr()
-        fig_heat = px.imshow(
-            corr, 
-            text_auto=".2f", 
-            color_continuous_scale='RdBu_r', # Haut contraste (Bleu/Rouge)
-            title="Force des liens"
-        )
-        st.plotly_chart(fig_heat, use_container_width=True)
+    fig_corr = px.scatter(
+        df_filtered, 
+        x="age", 
+        y="bmi", 
+        size="charges",      
+        color="charges",     
+        hover_name="id_client", 
+        labels={
+            "age": "Âge de l'assuré",
+            "bmi": "Indice de Masse Corporelle (IMC)",
+            "charges": "Frais Médicaux (€)"
+        },
+        title="Corrélation multidimensionnelle : Âge vs IMC (Bulles = Frais)",
+        color_continuous_scale=px.colors.sequential.Plasma # Couleurs contrastées
+    )
+    st.plotly_chart(fig_corr, use_container_width=True)
 
-    with col2:
-        st.write("**Tendance : Âge vs Frais**")
-        fig_trend = px.scatter(
-            df_filtered, x="age", y="charges", 
-            trendline="ols", 
-            trendline_color_override="red", # Visibilité maximale
-            title="Progression des frais"
-        )
-        st.plotly_chart(fig_trend, use_container_width=True)
-
-    # --- 6. AJOUT : NOTE ACCESSIBILITÉ (Nouveau) ---
+    # --- 6. NOTE ACCESSIBILITÉ ---
     st.info("""
     **♿ Mesures d'accessibilité implémentées :**
-    - **Navigation au clavier** : Tous les filtres sont accessibles via la touche **TAB**.
+    - **Navigation** : Tous les filtres sont accessibles via la touche **TAB**.
     - **Labels explicites** : Chaque menu possède un libellé clair pour les lecteurs d'écran.
-    - **Contraste** : Utilisation de palettes de couleurs à haut contraste (Rouge/Bleu/Blanc).
+    - **Interactivité** : Le graphique permet un survol détaillé (Hover) pour pallier les difficultés visuelles.
     """)
 
 except Exception as e:
