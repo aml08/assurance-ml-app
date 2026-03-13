@@ -16,28 +16,31 @@ try:
     
     if st.button("Lancer l'entraînement"):
         with st.spinner('Entraînement de l\'IA en cours...'):
-            # 3. PRÉPARATION (Preprocessing)
+            # 1. Sélectionner uniquement les colonnes utiles
+            features = ['age', 'sex', 'bmi', 'children', 'smoker', 'region', 'charges']
+            df_ml = df[features].copy()
+            
+            # 2. Transformer le texte en nombres (Encoding)
             le = LabelEncoder()
-            df['sex'] = le.fit_transform(df['sex'])
-            df['smoker'] = le.fit_transform(df['smoker'])
-            df['region'] = le.fit_transform(df['region'])
+            df_ml['sex'] = le.fit_transform(df_ml['sex'])
+            df_ml['smoker'] = le.fit_transform(df_ml['smoker'])
+            df_ml['region'] = le.fit_transform(df_ml['region'])
             
-            X = df.drop('charges', axis=1)
-            y = df['charges']
+            # 3. Séparer les caractéristiques (X) de la cible (y)
+            X = df_ml.drop('charges', axis=1)
+            y = df_ml['charges']
             
+            # 4. Découper en train/test
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
             
-            # 4. MODÈLE
+            # 5. Entraîner le modèle
             model = RandomForestRegressor(n_estimators=100, random_state=42)
             model.fit(X_train, y_train)
             
-            # 5. RÉSULTATS
+            # 6. Afficher les résultats
             score = model.score(X_test, y_test)
             st.success(f"Modèle entraîné avec succès !")
-            st.metric("Précision du modèle (R²)", f"{score:.2%}")
-            
-            # LOGS
-            print(f"LOG: Modèle Assurance entraîné - Score: {score}")
+            st.metric("Précision (R²)", f"{score:.2%}")
             
 except Exception as e:
     st.error(f"Erreur : {e}")
