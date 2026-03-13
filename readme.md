@@ -33,14 +33,23 @@ Cette application intègre des mesures de sécurité robustes :
 
     └── model_utils.py    # Fonctions de nettoyage
 
-1. Clôner le depôt
-git clone [https://github.com/votre-pseudo/assurance-ml-app.git](https://github.com/votre-pseudo/assurance-ml-app.git)
+Cloner le repo :
+```Bash
+git clone [https://github.com/votre-pseudo/assurance-ml-app.git](https://github.com/aml08/assurance-ml-app.git)
 
-2. Installer les dépendances
+```
+
+Installer les dépendances :
+```Bash
 pip install -r requirements.txt
 
-3. Lancer l'application
+```
+
+Lancer l'application : 
+```Bash
 streamlit run app.py
+
+```
 
 ## Accès Direct (Démo en ligne)
 
@@ -48,6 +57,7 @@ L'application est déployée et accessible ici :
 https://assurance-ml-app-aml08.streamlit.app
 Utilisateur : admin
 Mdp : admin
+
 
 
 
