@@ -33,15 +33,21 @@ if "authenticated" not in st.session_state:
 
 def login():
     st.title("🔐 Accès Restreint")
-    pwd = st.text_input("Veuillez saisir le mot de passe de l'entreprise :", type="password")
+    
+    # Ajout du champ Nom d'utilisateur
+    username = st.text_input("Identifiant")
+    pwd = st.text_input("Mot de passe", type="password")
+    
     if st.button("Se connecter"):
-        if pwd == st.secrets["PASSWORD"]:
+        # On vérifie l'identifiant ET le mot de passe
+        # Tu peux changer "admin" par le nom que tu veux
+        if username == "admin" and pwd == st.secrets["PASSWORD"]:
             st.session_state["authenticated"] = True
-            log_event("Authentification réussie.")
+            log_event(f"Authentification réussie pour l'utilisateur : {username}")
             st.rerun()
         else:
-            st.error("Mot de passe incorrect.")
-            log_event("Échec d'authentification (mauvais mot de passe).")
+            st.error("Identifiant ou mot de passe incorrect.")
+            log_event(f"Échec d'authentification pour : {username}")
 
 if not st.session_state["authenticated"]:
     login()
