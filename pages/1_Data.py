@@ -10,20 +10,20 @@ if "authenticated" not in st.session_state or not st.session_state["authenticate
 st.title("📊 Exploration des Données")
 
 try:
-    # --- 2. CHARGEMENT ET APERÇU (Ce que tu avais de base) ---
+    # --- 2. CHARGEMENT ET APERÇU
     df = pd.read_csv("data/insurance_data.csv")
     st.write("Aperçu des données :")
     st.dataframe(df.head())
     
-    # --- 3. PREMIER GRAPHIQUE (Ce que tu avais de base) ---
+    # --- 3. PREMIER GRAPHIQUE 
     st.subheader("Analyse des frais par catégorie")
-    var = st.selectbox("Choisir une variable pour le boxplot", ["sex", "smoker", "region"])
+    var = st.selectbox("Choisir une variable dans la liste déroulante", ["sex", "smoker", "region"])
     fig_box = px.box(df, x=var, y="charges", color=var, title=f"Frais selon : {var}")
     st.plotly_chart(fig_box)
 
     st.divider()
 
-    # --- 4. LE NOUVEAU DASHBOARD (Ajout demandé) ---
+    # --- 4. La corrélation
     st.subheader("🎯 Dashboard Interactif : Corrélation Âge, IMC et Frais")
     st.write("""
     Ce graphique montre comment l'âge et l'IMC influencent conjointement les frais. 
