@@ -70,10 +70,9 @@ df_test['Prédiction'] = model.predict(X_test)
 df_test['Erreur_Absolue'] = abs(df_test['Prédiction'] - df_test['Réel'])
 
 # 1. Observation factuelle sur le Tabagisme (Le biais le plus fort)
-# On ré-encode pour la lecture : 1 est souvent 'yes' (fumeur)
 bias_smoker = df_test.groupby('smoker')['Erreur_Absolue'].mean()
 
-st.write("### 🔍 Constatations sur les données")
+st.write("### Constatations sur les données")
 col1, col2 = st.columns(2)
 
 with col1:
@@ -83,18 +82,3 @@ with col1:
 with col2:
     diff_erreur = bias_smoker.max() - bias_smoker.min()
     st.metric("Écart d'erreur (Biais)", f"{diff_erreur:,.2f} €")
-
-# 2. Ton analyse personnalisée 
-st.markdown(f"""
-### 📝 Interprétation des faits observés
-En analysant les résultats, on observe que l'erreur moyenne est de **{bias_smoker.max():,.2f} €** pour un groupe contre **{bias_smoker.min():,.2f} €** pour l'autre. 
-
-**Le fait observé :** Le modèle a beaucoup plus de mal à prédire avec précision les frais des **fumeurs**. Cela s'explique par le fait que le statut 'fumeur' déclenche des frais très élevés mais très variables (certains fument mais n'ont pas encore de pathologies, d'autres si). 
-
-**Le risque de biais :** Le modèle risque de "sur-pénaliser" un jeune fumeur en bonne santé en lui appliquant la moyenne élevée du groupe, ce qui est une injustice algorithmique.
-""")
-
-st.info("""
-### 🛡️ Ma solution proposée
-Pour atténuer ce biais observé, je préconise d'introduire une **variable d'interaction** entre l'âge et le tabagisme (`age * smoker`) dans le modèle. Cela permettrait à l'IA de comprendre que l'impact du tabac n'est pas une amende forfaitaire, mais un risque qui progresse avec le temps.
-""")
